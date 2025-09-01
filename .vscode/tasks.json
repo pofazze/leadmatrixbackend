@@ -1,0 +1,32 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "backend: npm install",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"i"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Run backend (dev)",
+			"type": "shell",
+			"command": "npm run ts:dev",
+			"args": [],
+			"isBackground": true,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "backend typecheck",
+			"type": "shell",
+			"command": "npm run ts:build",
+			"group": "build"
+		}
+	]
+}

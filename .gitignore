@@ -1,0 +1,17 @@
+dist/
+.env
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Ambiente
+.env.local
+.env.*.local
+
+# Sistema
+.DS_Store
+*.log
