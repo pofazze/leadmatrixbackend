@@ -43,7 +43,21 @@ function getAvgThroughputPerSec(campaignId: string) {
   return count / 60;
 }
 
-router.post('/campaigns', async (req: Request, res: Response) => {
+// Filtra campanhas pelo projeto do usuário logado
+import { requireAuth } from '../utils/auth.js';
+
+router.get('/', requireAuth, async (req: Request, res: Response) => {
+  try {
+    const userProject = (req as any).user?.project;
+    if (!userProject) return res.json([]);
+    const campaigns = await Campaign.find({ project: userProject }).sort({ createdAt: -1 });
+    res.json(campaigns);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar campanhas' });
+  }
+});
+
+// ...existing code...
   try {
     const { name, meta, phones = [] } = (req.body as any) || {};
     if (!name) return res.status(400).json({ error: 'name required' });
