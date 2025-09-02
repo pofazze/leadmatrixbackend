@@ -79,7 +79,7 @@ router.get('/collections', async (req: Request, res: Response) => {
     let visible = collections.filter(col => !col.name.startsWith('system.')).map(col => col.name);
     // Usuário m15 só pode ver m15leads
     const user = (req as any).user;
-    console.log('[collections] user:', user);
+    console.log('[collections] user:', user, 'todas coleções:', visible);
     if (isM15(user)) visible = visible.filter(name => name === 'm15leads');
     res.json({ collections: visible });
   } catch (err) {
