@@ -10,10 +10,12 @@ const router = express.Router();
 router.use(cookieParser(process.env.COOKIE_SECRET || 'cookie-secret'));
 
 function setCookie(res: any, name: string, value: string, options: any = {}) {
+  const isProduction = process.env.NODE_ENV === 'production';
   const base = {
     httpOnly: true,
-    sameSite: 'strict' as const,
-    secure: process.env.NODE_ENV === 'production',
+    // Em produção, 'none' é necessário para cross-domain. Em dev, 'strict' é mais seguro.
+    sameSite: isProduction ? 'none' : 'strict', 
+    secure: isProduction, // 'secure' deve ser true se sameSite for 'none'
     signed: true,
     path: '/',
   };
