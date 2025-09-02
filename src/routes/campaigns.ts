@@ -57,14 +57,20 @@ router.get('/', requireAuth, async (req: Request, res: Response) => {
   }
 });
 
-// ...existing code...
+
+// Cria uma nova campanha, associando ao projeto do usuário logado
+router.post('/', requireAuth, async (req: Request, res: Response) => {
   try {
-    const { name, meta, phones = [] } = (req.body as any) || {};
+    const userProject = (req as any).user?.project;
+    const { name, meta, phones = [] } = req.body || {};
     if (!name) return res.status(400).json({ error: 'name required' });
-    const totals = { total: (phones as any[]).length, queued: 0, sending: 0, sent: 0, delivered: 0, read: 0, failed: 0, canceled: 0 };
-    const campaign = await (Campaign as any).create({ name, status: 'draft', totals, meta });
+    const totals = { total: phones.length, queued: 0, sending: 0, sent: 0, delivered: 0, read: 0, failed: 0, canceled: 0 };
+    const campaign = await Campaign.create({ name, status: 'draft', totals, meta, project: userProject });
     return res.status(201).json({ id: campaign._id, campaign });
-  } catch (e) { console.error('create campaign error', e); return res.status(500).json({ error: 'server_error' }); }
+  } catch (e) {
+    console.error('create campaign error', e);
+    return res.status(500).json({ error: 'server_error' });
+  }
 });
 
 router.post('/campaigns/:id/enqueue', async (req: Request, res: Response) => {
