@@ -127,9 +127,22 @@ router.post('/auth/complete-registration', csrfGuard, async (req, res) => {
 });
 
 // Me endpoint
-router.get('/auth/me', requireAuth, (_req, res) => {
-  const user = ( _req as any).user;
-  res.json({ id: user.sub, usuario: user.usuario, role: user.role, iat: Date.now()/1000 });
+router.get('/auth/me', requireAuth, async (req, res) => {
+  try {
+    const claims = (req as any).user;
+    const user = await User.findById(claims.sub).select('-password -passwordHash -refreshTokenHash').exec();
+    if (!user) {
+      return res.status(404).json({ error: 'user_not_found' });
+    }
+    res.json({
+      id: user._id,
+      usuario: user.user,
+      role: user.role,
+      project: user.project,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'internal_server_error' });
+  }
 });
 
 function genMaskedCode() {
