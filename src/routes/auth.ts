@@ -11,14 +11,19 @@ router.use(cookieParser(process.env.COOKIE_SECRET || 'cookie-secret'));
 
 function setCookie(res: any, name: string, value: string, options: any = {}) {
   const isProduction = process.env.NODE_ENV === 'production';
-  const base = {
+  const base: any = { // 'any' para permitir a propriedade 'domain' condicionalmente
     httpOnly: true,
-    // Em produção, 'none' é necessário para cross-domain. Em dev, 'strict' é mais seguro.
     sameSite: isProduction ? 'none' : 'strict', 
-    secure: isProduction, // 'secure' deve ser true se sameSite for 'none'
+    secure: isProduction,
     signed: true,
     path: '/',
   };
+
+  // ESSENCIAL: Define o domínio pai para compartilhar cookies entre subdomínios
+  if (isProduction) {
+    base.domain = '.pofazze.com'; 
+  }
+
   res.cookie(name, value, { ...base, ...options });
 }
 
