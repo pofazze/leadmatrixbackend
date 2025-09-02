@@ -81,6 +81,7 @@ router.get('/collections', async (req: Request, res: Response) => {
     const user = (req as any).user;
     console.log('[collections] user:', user, 'todas coleções:', visible);
     if (isM15(user)) visible = visible.filter(name => name === 'm15leads');
+    console.log('[collections] coleções visíveis para este usuário:', visible);
     res.json({ collections: visible });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao listar coleções' });
